@@ -557,18 +557,6 @@ footer{
 .video-tile::before {
     content: "";
     position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0);
-    transition: 0.3s ease;
-}
-
-/* play icon */
-.video-tile::after {
-   content: "▶";
-font-family: inherit;
-font-weight: normal;
-
-    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -576,17 +564,27 @@ font-weight: normal;
     width: 80px;
     height: 80px;
     border-radius: 50%;
+    background: rgba(0,0,0,.55);
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    z-index: 1;
+}
 
-    background: rgba(0,0,0,0.55);
-    color: var(--gold);
-    font-size: 2rem;
+/* play icon */
+.video-tile::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-35%, -50%);
 
-    opacity: 1;
-    transition: 0.3s ease;
+    width: 0;
+    height: 0;
+
+    border-top: 18px solid transparent;
+    border-bottom: 18px solid transparent;
+    border-left: 30px solid #d39b2a;
+
+    z-index: 2;
 }
 
 /* hover states */
