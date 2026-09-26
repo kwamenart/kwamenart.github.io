@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	const gigsUrl = "https://script.google.com/macros/s/AKfycbyRCg-g5_astWAWQkKz4Gx1Rw1Z22Uwo04Sn-_U_fBIb3v9Y9056rjY-3EeNjZlWzRLkQ/exec";
 
-const gigsPerPage = 5;
+const gigsPerPage = 4;
 let currentPage = 1;
 let allGigs = [];
 
@@ -65,7 +65,6 @@ async function loadGigs() {
         allGigs = await response.json();
 
         currentPage = 1;
-
         displayGigs();
 
     } catch (error) {
@@ -86,10 +85,8 @@ function displayGigs() {
 
     const gigsToShow = allGigs.slice(startIndex, endIndex);
 
-    // Clear the current cards
     gigGrid.innerHTML = "";
 
-    // Create the gig cards
     gigsToShow.forEach(gig => {
 
         const article = document.createElement("article");
@@ -123,7 +120,7 @@ function displayPagination() {
 
     const totalPages = Math.ceil(allGigs.length / gigsPerPage);
 
-    // Don't show pagination if everything fits on one page
+    // Don't show pagination if there's only one page
     if (totalPages <= 1) {
         return;
     }
@@ -133,50 +130,58 @@ function displayPagination() {
     pagination.id = "gig-pagination";
     pagination.className = "gig-pagination";
 
-    pagination.innerHTML = `
-        <button 
-            class="pagination-button"
-            onclick="changeGigPage(${currentPage - 1})"
-            ${currentPage === 1 ? "disabled" : ""}
-        >
-            ← Previous
-        </button>
+    const previousButton = document.createElement("button");
 
-        <span class="pagination-info">
-            Page ${currentPage} of ${totalPages}
-        </span>
+    previousButton.className = "pagination-button";
+    previousButton.textContent = "← Previous";
+    previousButton.disabled = currentPage === 1;
 
-        <button 
-            class="pagination-button"
-            onclick="changeGigPage(${currentPage + 1})"
-            ${currentPage === totalPages ? "disabled" : ""}
-        >
-            Next →
-        </button>
-    `;
+    const pageInfo = document.createElement("span");
 
-    // Put pagination directly underneath the gig cards
-    gigGrid.after(pagination);
-}
+    pageInfo.className = "pagination-info";
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
 
+    const nextButton = document.createElement("button");
 
-function changeGigPage(page) {
+    nextButton.className = "pagination-button";
+    nextButton.textContent = "Next →";
+    nextButton.disabled = currentPage === totalPages;
 
-    const totalPages = Math.ceil(allGigs.length / gigsPerPage);
+    // Previous button
+    previousButton.addEventListener("click", () => {
 
-    if (page < 1 || page > totalPages) {
-        return;
-    }
+        if (currentPage > 1) {
+            currentPage--;
+            displayGigs();
 
-    currentPage = page;
+            document.getElementById("gigs").scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
 
-    displayGigs();
-
-    // Scroll back to the gigs section
-    document.getElementById("gigs").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
     });
+
+    // Next button
+    nextButton.addEventListener("click", () => {
+
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayGigs();
+
+            document.getElementById("gigs").scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+
+    });
+
+    pagination.appendChild(previousButton);
+    pagination.appendChild(pageInfo);
+    pagination.appendChild(nextButton);
+
+    gigGrid.after(pagination);
 }
 
 
